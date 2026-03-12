@@ -7,62 +7,55 @@ const password = "123456"
 const bot = mineflayer.createBot({
   host: "mcfleet.net",
   port: 25565,
-  username: "FleetBot_" + Math.floor(Math.random() * 10000),
-  version: false
+  username: "FleetBot_" + Math.floor(Math.random()*10000),
+  version: "1.8.9"
 })
 
+console.log("Starting bot...")
+
 bot.on("login", () => {
-  console.log("Bot connected to server")
+  console.log("[LOGIN] Connected to server")
 })
 
 bot.on("spawn", () => {
-  console.log("Bot spawned in world")
+  console.log("[SPAWN] Bot spawned in world")
 
-  // Anti AFK system
+  // Anti AFK movement
   setInterval(() => {
     bot.setControlState("jump", true)
-
-    setTimeout(() => {
-      bot.setControlState("jump", false)
-    }, 500)
-
+    setTimeout(() => bot.setControlState("jump", false), 500)
   }, 30000)
-
 })
 
 bot.on("messagestr", (msg) => {
+  console.log("[CHAT]", msg)
 
-  const message = msg.toLowerCase()
+  const m = msg.toLowerCase()
 
-  if (message.includes("/register")) {
-    console.log("Registering bot account")
-
-    setTimeout(() => {
-      bot.chat(`/register ${password} ${password}`)
-    }, 2000)
+  if (m.includes("/register")) {
+    console.log("[AUTH] Register command detected")
+    bot.chat(`/register ${password} ${password}`)
   }
 
-  if (message.includes("/login")) {
-    console.log("Logging in")
-
-    setTimeout(() => {
-      bot.chat(`/login ${password}`)
-    }, 2000)
+  if (m.includes("/login")) {
+    console.log("[AUTH] Login command detected")
+    bot.chat(`/login ${password}`)
   }
-
 })
 
 bot.on("kicked", (reason) => {
-  console.log("Kicked:", reason)
+  console.log("[KICKED BY SERVER]")
+  console.log(reason)
 })
 
 bot.on("error", (err) => {
-  console.log("Error:", err)
+  console.log("[ERROR]")
+  console.log(err)
 })
 
 bot.on("end", () => {
-  console.log("Disconnected. Reconnecting in 10 seconds...")
-  setTimeout(createBot, 10000)
+  console.log("[DISCONNECTED] Reconnecting in 20 seconds...")
+  setTimeout(createBot, 20000)
 })
 
 }
